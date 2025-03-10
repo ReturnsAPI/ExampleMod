@@ -1,6 +1,6 @@
 -- ExampleMod
 
-mods["LuaENVY-ENVY"].auto()
+-- mods["LuaENVY-ENVY"].auto()  -- Seems to break hotloading
 mods["ReturnsAPI-ReturnsAPI"].auto()
 
 PATH = _ENV["!plugins_mod_folder_path"].."/"
