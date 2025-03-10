@@ -25,8 +25,18 @@ Callback.add(Callback.ON_HIT_PROC, function(actor, victim, hit_info)
 
     print(hit_info, hit_info.value, hit_info.RAPI)
     print(hit_info.x)
+    hit_info.x = 123
+    print(hit_info.x)
 
     local inf = hit_info.inflictor
     print(inf)
     print(inf.value, inf.RAPI)
+
+    local a = hit_info.attack_info
+    print(a)
+    print(a.value, a.RAPI)
+
+    print(a.x)
+    a.x = 123
+    print(a.x)
 end)
