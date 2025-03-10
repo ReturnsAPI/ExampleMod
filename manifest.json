@@ -1,0 +1,10 @@
+﻿{
+	"name": "ExampleMod",
+	"version_number": "1.0.0",
+	"website_url": "",
+	"description": "description",
+	"dependencies": [
+		"ReturnOfModding-ReturnOfModding-1.0.58",
+		"LuaENVY-ENVY-1.2.0"
+	]
+}
