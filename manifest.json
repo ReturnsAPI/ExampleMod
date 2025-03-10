@@ -5,6 +5,7 @@
 	"description": "description",
 	"dependencies": [
 		"ReturnOfModding-ReturnOfModding-1.0.58",
+		"ReturnsAPI-ReturnsAPI-1.0.0",
 		"LuaENVY-ENVY-1.2.0"
 	]
 }
