@@ -7,7 +7,7 @@ PATH = _ENV["!plugins_mod_folder_path"].."/"
 
 
 -- Load directories
-Initialize(function()
+local init = function()
     local dirs = path.get_directories(PATH)
     for _, dir in ipairs(dirs) do
         local files = path.get_files(dir)
@@ -15,4 +15,7 @@ Initialize(function()
             require(file)
         end
     end
-end)
+end
+Initialize(init)
+if hotload then init() end
+hotload = true
