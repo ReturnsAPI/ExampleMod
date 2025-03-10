@@ -22,4 +22,11 @@ Callback.add(Callback.ON_HIT_PROC, function(actor, victim, hit_info)
     print("'blueCircle' ON_HIT_PROC")
     print(victim.hp)
     print("Stack: "..actor:item_count(item))
+
+    print(hit_info, hit_info.value, hit_info.RAPI)
+    print(hit_info.x)
+
+    local inf = hit_info.inflictor
+    print(inf)
+    print(inf.value, inf.RAPI)
 end)
