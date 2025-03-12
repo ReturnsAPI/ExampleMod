@@ -42,6 +42,11 @@ function ListTest()
     for i, v in ipairs(list4) do
         add_to_output(i, v)
     end
+    
+    list1:destroy()
+    list2:destroy()
+    list3:destroy()
+    list4:destroy()
 
 
     print(output)
