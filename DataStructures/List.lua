@@ -1,66 +1,75 @@
--- List tests
+-- List test
 
-gui.add_imgui(function()
-    if ImGui.Begin("List") then
-
-        if ImGui.Button("Run tests") then
-            print("=== List tests ===")
-            local list = List.new()
-            list:add(1, 2, 100, 456)     -- [1, 2, 100, 456]
-            list:delete(2)               -- [1, 2, 456]
-            print(list:get(2))           -- > 456
-            print(list[3])               -- > 456
-            print(list[4])               -- > nil  (doing this with list:get() will print an error instead)
-            print(list[-1])              -- > nil
-            list:add("abc", 123, "de")   -- [1, 2, 456, "abc", 123, "de"]
-            list:insert(4, 1000)         -- [1, 2, 456, "abc", 1000, 123, "de"]
-            list:delete_value(123)       -- [1, 2, 456, "abc", 1000, "de"]
-            print(list:contains(456))    -- > true
-            print(list:contains(999))    -- > false
-            list:sort(true)              -- [1000, 456, 2, "de", "abc", 1]
-            print(list[5])               -- > "abc"
-            for i, v in ipairs(list) do  -- > Print array line-by-line -- [1000, 456, 2, "de", "abc", 1]
-                print(i, v)
-            end
-            print(list[6])               -- > 1
-            list:delete(5)               -- [1000, 456, 2, "de", "abc"]
-            print(#list)                 -- > 5
-            print(list:size())           -- > 5
-            list:set(2, 200)             -- [1000, 456, 200, "de", "abc"]
-            list[4] = "defg"             -- [1000, 456, 200, "defg", "abc"]
-            for i, v in ipairs(list) do  -- > Print array line-by-line -- [1000, 456, 200, "defg", "abc"]
-                print(i, v)
-            end
-            list:clear()                 -- []
-            print(#list)                 -- > 0
+function ListTest()
+    local output = "\n"
+    function add_to_output(...)
+        for _, s in ipairs{...} do
+            output = output..tostring(s).." "
         end
-    
+        output = output.."\n"
     end
-    ImGui.End()
-end)
+
+
+    add_to_output("=== List tests ===")
+    
+    local list1 = List.new()
+    list1:add(1, 200, 345, "abc", 1000, "def")
+    list1:delete(3)
+    add_to_output("list1: ", list1:get(3), list1[4], "\n")   -- list1: 1000 1000
+
+    local list2 = List.new({5, 4, 3, 2, 100})
+    list2:set(0, 500)
+    list2[2] = list2[2] * 100
+    list2:delete_value(3)
+    add_to_output("list2 size: ", list2:size(), #list2)
+    for i, v in ipairs(list2) do
+        add_to_output(i, v)
+    end
+    add_to_output()
+
+    local list3 = List.new({10, 10, 10, 10, 10})
+    local n = list3[5]
+    list3:delete(4)
+    list3:insert(2, 45)
+    add_to_output("list3: ", n, list3:get(2))
+    list3:clear()
+    add_to_output("list3 new size: ", list3:size(), "\n")
+
+    local list4 = List.new({1, 6, 4, 5, 2, 9, 3, 8, 7, 0})
+    add_to_output("list4 pos of 9: ", list4:find(9))
+    add_to_output("contains 2? 73?: ", list4:contains(2), list4:contains(73))
+    list4:sort()
+    for i, v in ipairs(list4) do
+        add_to_output(i, v)
+    end
+
+
+    print(output)
+end
 
 -- Expected output from prints:
 --[[
-456
-456
-nil
-nil
-true
-false
-abc
-1       1000
-2       456
-3       2
-4       de
-5       abc
-6       1
-1
-5
-5
-1       1000
-2       456
-3       200
-4       defg
-5       abc
-0
+list1:  1000 1000
+
+list2 size:  4 4
+1 500
+2 400
+3 2
+4 100
+
+list3:  10 45
+list3 new size:  0
+
+list4 pos of 9:  5
+contains 2? 73?:  true false
+1 0
+2 1
+3 2
+4 3
+5 4
+6 5
+7 6
+8 7
+9 8
+10 9
 ]]

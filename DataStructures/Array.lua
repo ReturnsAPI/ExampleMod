@@ -1,66 +1,74 @@
--- Array tests
+-- Array test
 
-gui.add_imgui(function()
-    if ImGui.Begin("Array") then
-
-        if ImGui.Button("Run tests") then
-            print("=== Array tests ===")
-            local arr = Array.new()
-            arr:push(1, 2, 100, 456)    -- [1, 2, 100, 456]
-            arr:delete(2)               -- [1, 2, 456]
-            print(arr:get(2))           -- > 456
-            print(arr[3])               -- > 456
-            print(arr[4])               -- > nil  (doing this with arr:get() will print an error instead)
-            print(arr[-1])              -- > nil
-            arr:push("abc", 123, "de")  -- [1, 2, 456, "abc", 123, "de"]
-            arr:insert(4, 1000)         -- [1, 2, 456, "abc", 1000, 123, "de"]
-            arr:delete_value(123)       -- [1, 2, 456, "abc", 1000, "de"]
-            print(arr:contains(456))    -- > true
-            print(arr:contains(999))    -- > false
-            arr:sort(true)              -- [1000, 456, 2, "de", "abc", 1]
-            print(arr[5])               -- > "abc"
-            for i, v in ipairs(arr) do  -- > Print array line-by-line -- [1000, 456, 2, "de", "abc", 1]
-                print(i, v)
-            end
-            local c = arr:pop()         -- [1000, 456, 2, "de", "abc"], c = 1
-            print(c)                    -- > 1
-            print(#arr)                 -- > 5
-            print(arr:size())           -- > 5
-            arr:set(2, 200)             -- [1000, 456, 200, "de", "abc"]
-            arr[4] = "defg"             -- [1000, 456, 200, "defg", "abc"]
-            for i, v in ipairs(arr) do  -- > Print array line-by-line -- [1000, 456, 200, "defg", "abc"]
-                print(i, v)
-            end
-            arr:clear()                 -- []
-            print(#arr)                 -- > 0
+function ArrayTest()
+    local output = "\n"
+    function add_to_output(...)
+        for _, s in ipairs{...} do
+            output = output..tostring(s).." "
         end
-    
+        output = output.."\n"
     end
-    ImGui.End()
-end)
+
+
+    add_to_output("=== Array tests ===")
+    
+    local arr1 = Array.new()
+    arr1:push(1, 200, 345, "abc", 1000, "def")
+    arr1:delete(3)
+    add_to_output("arr1: ", arr1:get(3), arr1[4], "\n")   -- arr1: 1000 1000
+
+    local arr2 = Array.new({5, 4, 3, 2, 100})
+    arr2:set(0, 500)
+    arr2[2] = arr2[2] * 100
+    arr2:delete_value(3)
+    add_to_output("arr2 size: ", arr2:size(), #arr2)
+    for i, v in ipairs(arr2) do
+        add_to_output(i, v)
+    end
+    add_to_output()
+
+    local arr3 = Array.new(5, 10)
+    local n = arr3:pop()
+    arr3:insert(2, 45)
+    add_to_output("arr3: ", n, arr3:get(2))
+    arr3:clear()
+    add_to_output("arr3 new size: ", arr3:size(), "\n")
+
+    local arr4 = Array.new({1, 6, 4, 5, 2, 9, 3, 8, 7, 0})
+    add_to_output("arr4 pos of 9: ", arr4:find(9))
+    add_to_output("contains 2? 73?: ", arr4:contains(2), arr4:contains(73))
+    arr4:sort()
+    for i, v in ipairs(arr4) do
+        add_to_output(i, v)
+    end
+
+
+    print(output)
+end
 
 -- Expected output from prints:
 --[[
-456
-456
-nil
-nil
-true
-false
-abc
-1       1000
-2       456
-3       2
-4       de
-5       abc
-6       1
-1
-5
-5
-1       1000
-2       456
-3       200
-4       defg
-5       abc
-0
+arr1:  1000 1000
+
+arr2 size:  4 4
+1 500
+2 400
+3 2
+4 100
+
+arr3:  10 45
+arr3 new size:  0
+
+arr4 pos of 9:  5
+contains 2? 73?:  true false
+1 0
+2 1
+3 2
+4 3
+5 4
+6 5
+7 6
+8 7
+9 8
+10 9
 ]]
