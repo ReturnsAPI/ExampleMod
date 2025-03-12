@@ -1,4 +1,4 @@
--- List test
+-- List tests
 
 function ListTest()
     local output = "\n"

@@ -1,4 +1,4 @@
--- Array test
+-- Array tests
 
 function ArrayTest()
     local output = "\n"
