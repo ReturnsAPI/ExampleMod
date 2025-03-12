@@ -32,7 +32,7 @@ gui.add_imgui(function()
                 print(i, v)
             end
             arr:clear()                 -- []
-            print(#arr)                 -- 0
+            print(#arr)                 -- > 0
         end
     
     end
