@@ -16,6 +16,7 @@ local init = function()
         end
     end
 end
-Initialize(init)
-if hotload then init() end
-hotload = true
+init()
+-- Initialize(init)
+-- if hotload then init() end
+-- hotload = true
