@@ -24,7 +24,7 @@ function StructTest()
         add_to_output(k, v)
     end
     local keys = s1:get_keys()
-    for _, key in pairs(keys) do
+    for _, key in ipairs(keys) do
         add_to_output(key)
     end
 
