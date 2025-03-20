@@ -14,6 +14,9 @@ local files = path.get_files(PATH.."Testing")
 for _, file in ipairs(files) do
     local status = require(file)
     table.insert(testing_status, {path.filename(file), status})
+    if status then  log.info("✓  "..path.filename(file).." passed")
+    else            log.info(" ✗ "..path.filename(file).." failed")
+    end
 end
 
 -- Print testing status
