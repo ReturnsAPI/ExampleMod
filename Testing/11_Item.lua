@@ -26,25 +26,39 @@ local init = function()
         if actor:item_count(item) <= 0 then return end
     
         print("'blueCircle' ON_HIT_PROC")
-        print(victim.hp)
-        print("Stack: "..actor:item_count(item))
+
+        for k, v in pairs(hit_info) do
+            print(k, v)
+        end
+
+        -- hit_info.damage = 100
+        -- hit_info.damage_fake = 100
+        -- hit_info.damage_true = 100
+
+        -- for k, v in pairs(hit_info) do
+        --     print(k, v)
+        -- end
+        
+
+        -- print(victim.hp)
+        -- print("Stack: "..actor:item_count(item))
     
-        print(hit_info, hit_info.value, hit_info.RAPI)
-        print(hit_info.x)
-        hit_info.x = 123
-        print(hit_info.x)
+        -- print(hit_info, hit_info.value, hit_info.RAPI)
+        -- print(hit_info.x)
+        -- hit_info.x = 123
+        -- print(hit_info.x)
     
-        local inf = hit_info.inflictor
-        print(inf)
-        print(inf.value, inf.RAPI)
+        -- local inf = hit_info.inflictor
+        -- print(inf)
+        -- print(inf.value, inf.RAPI)
     
-        local a = hit_info.attack_info
-        print(a)
-        print(a.value, a.RAPI)
+        -- local a = hit_info.attack_info
+        -- print(a)
+        -- print(a.value, a.RAPI)
     
-        print(a.x)
-        a.x = 123
-        print(a.x)
+        -- print(a.x)
+        -- a.x = 123
+        -- print(a.x)
     end)
 
     item_hotloaded = true
