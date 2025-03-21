@@ -1,6 +1,6 @@
 -- Blue Circle
 
-Initialize(function()
+local init = function()
     local item = Item.new("blueCircle")
 
     item:set_sprite(Sprite.new("blueCircle", "~/blueCircle.png", 1, 16, 16))
@@ -46,7 +46,11 @@ Initialize(function()
         a.x = 123
         print(a.x)
     end)
-end)
+
+    item_hotloaded = true
+end
+Initialize(init)
+if item_hotloaded then init() end
 
 -- Return status
 return true
