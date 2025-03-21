@@ -128,15 +128,15 @@ gui.add_imgui(function()
             if p:exists() then p:item_take(item, 1) end
         end
 
-        if ImGui.Button("New item test") then
-            local item = Item.new("myItem")
-            item:set_sprite(Sprite.new("blueCircle", "~/blueCircle.png", 1, 16, 16))
-            item:set_tier(0)
-            ItemLog.new_from_item(item)
+        -- if ImGui.Button("New item test") then
+        --     local item = Item.new("myItem")
+        --     item:set_sprite(Sprite.new("blueCircle", "~/blueCircle.png", 1, 16, 16))
+        --     item:set_tier(0)
+        --     ItemLog.new_from_item(item)
 
-            print(item.value)
-            item:show_properties()
-        end
+        --     print(item.value)
+        --     item:show_properties()
+        -- end
 
         if ImGui.Button("Spawn all crates") then
             local player = Player.get_local()
