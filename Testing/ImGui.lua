@@ -48,6 +48,38 @@ gui.add_imgui(function()
             if not p then p = Proxy.new(); p.abc = 123 end
             print(p.abc)
         end
+
+        if ImGui.Button("player count") then
+            print(GM.instance_number(gm.constants.oP))
+        end
+
+        if ImGui.Button("instance_number benchmark") then
+            Util.benchmark(10000, GM.instance_number, gm.constants.oP)
+
+            local foo = function(obj)
+                local holder = RValue.new_holder(1)
+                holder[0] = RValue.new(obj)
+                local out = RValue.new(0)
+                gmf.instance_number(out, nil, nil, 1, holder)
+                return RValue.to_wrapper(out)
+            end
+
+            local bar = function(obj)
+                local holder = RValue.new_holder(1)
+                holder[0] = RValue.from_wrapper(obj)
+                local out = RValue.new(0)
+                gmf.instance_number(out, nil, nil, 1, holder)
+                return RValue.to_wrapper(out)
+            end
+            
+            Util.benchmark(10000, foo, gm.constants.oP)
+            Util.benchmark(10000, bar, gm.constants.oP)
+            Util.benchmark(10000, foo, gm.constants.oP)
+            Util.benchmark(10000, bar, gm.constants.oP)
+
+            print(foo(gm.constants.oP))
+            print(bar(gm.constants.oP))
+        end
     
     end
     ImGui.End()

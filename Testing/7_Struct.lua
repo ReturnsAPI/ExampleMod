@@ -1,4 +1,4 @@
--- Struct tests
+-- Struct test
 
 local exit = true
 
