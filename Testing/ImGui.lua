@@ -1,15 +1,26 @@
 -- ImGui
 
 gui.add_imgui(function()
-    if ImGui.Begin("GC") then
+    if ImGui.Begin("ExampleMod") then
 
-        if ImGui.Button("Collect") then
-            collectgarbage("collect")
+        if ImGui.Button("Collect garbage") then
+            collectgarbage()
         end
 
-        if ImGui.Button("m") then
-            if not guhh then guhh = Proxy.new(); guhh.abc = 123 end
-            print(guhh.abc)
+        if ImGui.Button("array __gc test") then
+            for i = 1, 10000 do
+                Array.new()
+            end
+        end
+
+        if ImGui.Button("struct __gc test") then
+            for i = 1, 10000 do
+                Struct.new()
+            end
+        end
+
+        if ImGui.Button("#__ref_map") then
+            Map.print_refmap_count()
         end
 
         if ImGui.Button("map test") then
@@ -31,6 +42,11 @@ gui.add_imgui(function()
             Util.benchmark(10000, foo)
 
             map:destroy()
+        end
+
+        if ImGui.Button("hotload proxy preservation") then
+            if not p then p = Proxy.new(); p.abc = 123 end
+            print(p.abc)
         end
     
     end
