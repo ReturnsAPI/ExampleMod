@@ -132,9 +132,21 @@ gui.add_imgui(function()
             local item = Item.new("myItem")
             item:set_sprite(Sprite.new("blueCircle", "~/blueCircle.png", 1, 16, 16))
             item:set_tier(0)
+            ItemLog.new_from_item(item)
 
             print(item.value)
             item:show_properties()
+        end
+
+        if ImGui.Button("Spawn all crates") then
+            local player = Player.get_local()
+            if player:exists() then
+                gm.instance_create(player.x - 80, player.y, gm.object_find("ror-generated_CommandCrate_0"))
+                gm.instance_create(player.x - 40, player.y, gm.object_find("ror-generated_CommandCrate_1"))
+                gm.instance_create(player.x, player.y, gm.object_find("ror-generated_CommandCrate_2"))
+                gm.instance_create(player.x + 40, player.y, gm.object_find("ror-generated_CommandCrate_3"))
+                gm.instance_create(player.x + 80, player.y, gm.object_find("ror-generated_CommandCrate_4"))
+            end
         end
     
     end
