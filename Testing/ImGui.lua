@@ -99,6 +99,43 @@ gui.add_imgui(function()
                 for i = 1, 10 do obj:create(p.x, p.y) end
             end
         end
+
+        if ImGui.Button("Spawn 100 Lemurians on the player") then
+            local p = Player.get_local()
+            if p:exists() then
+                local obj = Object.find("lizard")
+                for i = 1, 100 do obj:create(p.x, p.y) end
+            end
+        end
+
+        if ImGui.Button("Kill all Lemurians") then
+            -- GM.instance_destroy(gm.constants.oLizard)
+            local lems = Instance.find_all(gm.constants.oLizard)
+            for _, lem in ipairs(lems) do
+                lem:actor_kill()
+            end
+        end
+
+        if ImGui.Button("Get Barbed Wire item (and give 1 to player if they exist)") then
+            local item = Item.find("barbedWire")
+            print(item, item.value)
+            print(item.namespace, item.identifier)
+
+            item:show_properties()
+
+            local p = Player.get_local()
+            if p:exists() then p:item_give(item, 2) end
+            if p:exists() then p:item_take(item, 1) end
+        end
+
+        if ImGui.Button("New item test") then
+            local item = Item.new("myItem")
+            item:set_sprite(Sprite.new("blueCircle", "~/blueCircle.png", 1, 16, 16))
+            item:set_tier(0)
+
+            print(item.value)
+            item:show_properties()
+        end
     
     end
     ImGui.End()
