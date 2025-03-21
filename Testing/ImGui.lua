@@ -85,12 +85,20 @@ gui.add_imgui(function()
             local p = Instance.find(gm.constants.oP)
             print(p)
             print(p.value, p.id, type(p))
+            print("hp", p.hp)
             p:actor_kill()
+            print("new hp", p.hp)
         end
 
-        -- if ImGui.Button("player count") then
-        --     print(GM.instance_number(gm.constants.oP))
-        -- end
+        if ImGui.Button("Spawn 10 Lemurians on the player") then
+            local p = Player.get_local()
+            print(p, p.value)
+            if p:exists() then
+                local obj = Object.find("lizard")
+                print(obj, obj.value)
+                for i = 1, 10 do obj:create(p.x, p.y) end
+            end
+        end
     
     end
     ImGui.End()
