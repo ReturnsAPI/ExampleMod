@@ -80,6 +80,17 @@ gui.add_imgui(function()
             print(foo(gm.constants.oP))
             print(bar(gm.constants.oP))
         end
+
+        if ImGui.Button("Find player") then
+            local p = Instance.find(gm.constants.oP)
+            print(p)
+            print(p.value, p.id, type(p))
+            p:actor_kill()
+        end
+
+        -- if ImGui.Button("player count") then
+        --     print(GM.instance_number(gm.constants.oP))
+        -- end
     
     end
     ImGui.End()
