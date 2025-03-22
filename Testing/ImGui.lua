@@ -148,6 +148,66 @@ gui.add_imgui(function()
                 gm.instance_create(player.x + 80, player.y, gm.object_find("ror-generated_CommandCrate_4"))
             end
         end
+
+        if ImGui.Button("Benchmark actor:item_count") then
+            local player = Player.get_local()
+            if player:exists() then
+                Util.benchmark(100000, player.item_count, player, 0)
+            end
+        end
+
+        if ImGui.Button("Benchmark actor:buff_count") then
+            local player = Player.get_local()
+            if player:exists() then
+                Util.benchmark(100000, player.buff_count, player, 0)
+                -- Util.benchmark(100000, player.buff_count2, player, 0)
+            end
+        end
+
+        if ImGui.Button("player.buff_stack?") then
+            local player = Player.get_local()
+            if player:exists() then
+                print(player.buff_stack)
+            end
+        end
+
+        if ImGui.Button("Apply buff 0 to player") then
+            local player = Player.get_local()
+            if player:exists() then
+                player:buff_apply(0, 300)
+                print(player:buff_count(0))
+            end
+        end
+
+        if ImGui.Button("Apply buff banditSkull to player") then
+            local player = Player.get_local()
+            if player:exists() then
+                player:buff_apply(Buff.find("banditSkull"), 300)
+                print(player:buff_count(Buff.find("banditSkull")))
+            end
+        end
+
+        if ImGui.Button("Get buff banditSkull stack count") then
+            local player = Player.get_local()
+            if player:exists() then
+                print(player:buff_count(Buff.find("banditSkull")))
+            end
+        end
+
+        if ImGui.Button("Apply buff blueCircle to player") then
+            local player = Player.get_local()
+            if player:exists() then
+                player:buff_apply(Buff.find("blueCircle"), 300)
+                print(Buff.find("blueCircle").value)
+            end
+        end
+
+        if ImGui.Button("Log these buffs") then
+            local buffs = Class.Buff
+            for i, v in ipairs(buffs) do
+                print(i, v[1], v[2])
+            end
+        end
     
     end
     ImGui.End()
