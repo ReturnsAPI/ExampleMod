@@ -97,6 +97,10 @@ gui.add_imgui(function()
                 local obj = Object.find("lizard")
                 print(obj, obj.value)
                 for i = 1, 10 do obj:create(p.x, p.y) end
+
+                print(Object.find("lizard"))
+                print(Object.find("lizard", "~"))
+                print(Object.find("lizard", "ror"))
             end
         end
 
@@ -164,10 +168,13 @@ gui.add_imgui(function()
             end
         end
 
-        if ImGui.Button("player.buff_stack?") then
+        if ImGui.Button("print entire player.buff_stack") then
             local player = Player.get_local()
             if player:exists() then
-                print(player.buff_stack)
+                local arr = player.buff_stack
+                for i, v in ipairs(arr) do
+                    print(i - 1, v)
+                end
             end
         end
 
@@ -206,6 +213,17 @@ gui.add_imgui(function()
             local buffs = Class.Buff
             for i, v in ipairs(buffs) do
                 print(i, v[1], v[2])
+            end
+        end
+
+        if ImGui.Button("Log all vanilla particles") then
+            local player = Player.get_local()
+            local parts = Particle.find_all("ror")
+            for i, part in ipairs(parts) do
+                print(part:get_identifier(), part.value)
+                if player:exists() then
+                    part:create(player.x, player.y)
+                end
             end
         end
     

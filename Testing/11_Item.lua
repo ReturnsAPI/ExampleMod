@@ -8,6 +8,15 @@ local init = function()
 
     ItemLog.new_from_item(item)
 
+    -- Language(Language.ENGLISH, {
+    --     item = {
+    --         blueCircle = {
+    --             name        = "Blue Circle",
+    --             description = "Does something."
+    --         }
+    --     }
+    -- })
+
     item:show_properties()
 
     Callback.add(item.on_acquired, function(actor, stack)
