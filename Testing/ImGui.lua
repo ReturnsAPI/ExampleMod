@@ -1,5 +1,26 @@
 -- ImGui
 
+do
+    local units = {
+        ['seconds'] = 1,
+        ['milliseconds'] = 1000,
+        ['microseconds'] = 1000000,
+        ['nanoseconds'] = 1000000000
+    }
+
+    function benchmark(unit, decPlaces, n, f, ...)
+        local elapsed = 0
+        local multiplier = units[unit]
+        for i = 1, n do
+            local now = os.clock()
+            f(...)
+            elapsed = elapsed + (os.clock() - now)
+        end
+        print(string.format('Benchmark results:\n  - %d function calls\n  - %.'.. decPlaces ..'f %s elapsed\n  - %.'.. decPlaces ..'f %s avg execution time.\n  - Leeway: '..(16.66 / ((elapsed / n) * multiplier)), n, elapsed * multiplier, unit, (elapsed / n) * multiplier, unit))
+    end
+end
+
+
 gui.add_imgui(function()
     if ImGui.Begin("ExampleMod") then
 
@@ -51,6 +72,14 @@ gui.add_imgui(function()
 
         if ImGui.Button("player count") then
             print(GM.instance_number(gm.constants.oP))
+        end
+
+        if ImGui.Button("player count benchmark") then
+            -- Util.benchmark(100000, gm.instance_number, gm.constants.oP)
+            -- Util.benchmark(100000, GM.instance_number, gm.constants.oP)
+
+            benchmark("milliseconds", 5, 100000, gm.instance_number, gm.constants.oP)
+            benchmark("milliseconds", 5, 100000, GM.instance_number, gm.constants.oP)
         end
 
         if ImGui.Button("instance_number benchmark") then
@@ -168,6 +197,25 @@ gui.add_imgui(function()
             end
         end
 
+        if ImGui.Button("gm.CInstance.instance_id_to_CInstance_ffi size") then
+            print(#gm.CInstance.instance_id_to_CInstance_ffi)
+            local player = Player.get_local()
+            if player:exists() then
+                local v = gm.CInstance.instance_id_to_CInstance_ffi[player.value]
+                print(v)
+                print(gm.CInstance.instance_id_to_CInstance_ffi[v])
+            end
+        end
+
+        if ImGui.Button("player get object index self") then
+            local player = Player.get_local()
+            if player:exists() then
+                local script = player.get_object_index_self
+                print(script)
+                print(player:get_object_index_self())
+            end
+        end
+
         if ImGui.Button("print entire player.buff_stack") then
             local player = Player.get_local()
             if player:exists() then
@@ -226,7 +274,49 @@ gui.add_imgui(function()
                 end
             end
         end
-    
+
+        if ImGui.Button("Item.find_all common") then
+            local items = Item.find_all(ItemTier.COMMON, Item.Property.TIER)
+            for _, v in ipairs(items) do
+                print(v.value, v.identifier, v.namespace)
+            end
+        end
+
+        if ImGui.Button("Benchmark Item.find_all") then
+            Util.benchmark(1000, Item.find_all)
+            Util.benchmark(1000, Item.find_all, ItemTier.COMMON, Item.Property.TIER)
+        end
+
+        if ImGui.Button("Buff.find_all") then
+            local buffs = Buff.find_all()
+            for _, v in ipairs(buffs) do
+                print(v.value, v.identifier, v.namespace)
+            end
+        end
+
+        if ImGui.Button("jit.on draw_circle") then
+            jit.on(gmf.draw_circle)
+        end
+
+        if ImGui.Button("jit.off draw_circle") then
+            jit.off(gmf.draw_circle)
+        end
+        
+        if ImGui.Button("Benchmark drawing") then
+            local foo = function(x, y, r, outline)
+                local holder = RValue.new_holder(4)
+                holder[0] = RValue.new(x)
+                holder[1] = RValue.new(y)
+                holder[2] = RValue.new(r)
+                holder[3] = RValue.new(outline)
+                gmf.draw_circle(RValue.new(0), nil, nil, 4, holder)
+            end
+
+            Util.benchmark(100000, gm.draw_circle, 0, 0, 10, false)
+            Util.benchmark(100000, GM.draw_circle, 0, 0, 10, false)
+            Util.benchmark(100000, foo, 0, 0, 10, false)
+        end
+
     end
     ImGui.End()
 end)
