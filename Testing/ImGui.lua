@@ -78,8 +78,25 @@ gui.add_imgui(function()
             -- Util.benchmark(100000, gm.instance_number, gm.constants.oP)
             -- Util.benchmark(100000, GM.instance_number, gm.constants.oP)
 
+            -- jit.on(gmf.instance_number)
+
+            local foo = function(obj)
+                local holder = RValue.new_holder(1)
+                holder[0] = RValue.new(obj)
+                local out = RValue.new(0)
+                gmf.instance_number(out, nil, nil, 1, holder)
+                return RValue.to_wrapper(out)
+            end
+
             benchmark("milliseconds", 5, 100000, gm.instance_number, gm.constants.oP)
             benchmark("milliseconds", 5, 100000, GM.instance_number, gm.constants.oP)
+            benchmark("milliseconds", 5, 100000, foo, gm.constants.oP)
+        end
+
+        if ImGui.Button("instance find player") then
+            benchmark("milliseconds", 5, 100000, gm.instance_find, gm.constants.oP, 0)
+            benchmark("milliseconds", 5, 100000, GM.instance_find, gm.constants.oP, 0)
+            -- benchmark("milliseconds", 5, 100000, foo, gm.constants.oP)
         end
 
         if ImGui.Button("instance_number benchmark") then
