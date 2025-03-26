@@ -8,15 +8,6 @@ local init = function()
 
     ItemLog.new_from_item(item)
 
-    -- Language(Language.ENGLISH, {
-    --     item = {
-    --         blueCircle = {
-    --             name        = "Blue Circle",
-    --             description = "Does something."
-    --         }
-    --     }
-    -- })
-
     item:show_properties()
 
     Callback.add(item.on_acquired, function(actor, stack)
@@ -25,11 +16,12 @@ local init = function()
         print("Stack: "..stack)
     end)
     
-    -- RecalculateStats.add(function(actor, api)
     --     -- Add 10 maxhp per stack
-    --     local stack = actor:item_count(item)
-    --     api.maxhp_add(10 * stack)
-    -- end)
+    RecalculateStats.add(function(actor, api)
+        -- Add 10 maxhp per stack
+        local stack = actor:item_count(item)
+        api.maxhp_add(10 * stack)
+    end)
     
     Callback.add(Callback.ON_HIT_PROC, function(actor, victim, hit_info)
         if actor:item_count(item) <= 0 then return end

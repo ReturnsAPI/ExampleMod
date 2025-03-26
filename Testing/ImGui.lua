@@ -81,6 +81,26 @@ gui.add_imgui(function()
             -- jit.on(gmf.instance_number)
 
             local foo = function(obj)
+                local holder = RValue.new_holder_scr(1)
+                holder[0] = RValue.new(obj)
+                local out = RValue.new(0)
+                gmf._mod_instance_number(nil, nil, out, 1, holder)
+                return RValue.to_wrapper(out)
+            end
+
+            benchmark("milliseconds", 5, 100000, gm._mod_instance_number, gm.constants.oP)
+            benchmark("milliseconds", 5, 100000, GM._mod_instance_number, gm.constants.oP)
+            benchmark("milliseconds", 5, 100000, foo, gm.constants.oP)
+            benchmark("milliseconds", 5, 100000, Instance.count, gm.constants.oP)
+        end
+
+        if ImGui.Button("player count benchmark 2") then
+            -- Util.benchmark(100000, gm.instance_number, gm.constants.oP)
+            -- Util.benchmark(100000, GM.instance_number, gm.constants.oP)
+
+            -- jit.on(gmf.instance_number)
+
+            local foo = function(obj)
                 local holder = RValue.new_holder(1)
                 holder[0] = RValue.new(obj)
                 local out = RValue.new(0)
@@ -91,12 +111,25 @@ gui.add_imgui(function()
             benchmark("milliseconds", 5, 100000, gm.instance_number, gm.constants.oP)
             benchmark("milliseconds", 5, 100000, GM.instance_number, gm.constants.oP)
             benchmark("milliseconds", 5, 100000, foo, gm.constants.oP)
+            -- benchmark("milliseconds", 5, 100000, Instance.count, gm.constants.oP)
         end
 
         if ImGui.Button("instance find player") then
             benchmark("milliseconds", 5, 100000, gm.instance_find, gm.constants.oP, 0)
             benchmark("milliseconds", 5, 100000, GM.instance_find, gm.constants.oP, 0)
             -- benchmark("milliseconds", 5, 100000, foo, gm.constants.oP)
+        end
+
+        if ImGui.Button("instance find player 2") then
+            benchmark("milliseconds", 5, 100000, gm._mod_instance_find, gm.constants.oP, 0)
+            benchmark("milliseconds", 5, 100000, GM._mod_instance_find, gm.constants.oP, 0)
+            -- benchmark("milliseconds", 5, 100000, foo, gm.constants.oP)
+            print(gm._mod_instance_find(gm.constants.oP, 0))
+        end
+
+        if ImGui.Button("item find") then
+            benchmark("milliseconds", 5, 100000, gm.item_find, "ror-meatNugget")
+            benchmark("milliseconds", 5, 100000, GM.item_find, "ror-meatNugget")
         end
 
         if ImGui.Button("instance_number benchmark") then
