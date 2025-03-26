@@ -16,7 +16,6 @@ local init = function()
         print("Stack: "..stack)
     end)
     
-    --     -- Add 10 maxhp per stack
     RecalculateStats.add(function(actor, api)
         -- Add 10 maxhp per stack
         local stack = actor:item_count(item)
