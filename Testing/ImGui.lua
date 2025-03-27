@@ -24,6 +24,16 @@ end
 gui.add_imgui(function()
     if ImGui.Begin("ExampleMod") then
 
+        if ImGui.Button("Skip teleporter") then
+            local p = Player.get_local()
+            local tp = Instance.find(gm.constants.oTeleporter)
+            if not tp:exists() then tp = Instance.find(gm.constants.oTeleporterEpic) end
+            if p:exists() and tp:exists() then
+                p.x, p.y = tp.x, tp.y - 12
+                tp.active = 3
+            end
+        end
+
         if ImGui.Button("Collect garbage") then
             collectgarbage()
         end
@@ -70,6 +80,15 @@ gui.add_imgui(function()
             print(p.abc)
         end
 
+        if ImGui.Button("create 100000 holders and rvalues at once") then
+            local function foo()
+                RValue.new_holder(1)
+                RValue.new(0)
+            end
+
+            Util.benchmark(100000, foo)
+        end
+
         if ImGui.Button("player count") then
             print(GM.instance_number(gm.constants.oP))
         end
@@ -88,18 +107,23 @@ gui.add_imgui(function()
                 return RValue.to_wrapper(out)
             end
 
-            benchmark("milliseconds", 5, 100000, gm._mod_instance_number, gm.constants.oP)
-            benchmark("milliseconds", 5, 100000, GM._mod_instance_number, gm.constants.oP)
-            benchmark("milliseconds", 5, 100000, foo, gm.constants.oP)
-            benchmark("milliseconds", 5, 100000, Instance.count, gm.constants.oP)
+            local bar = function(obj)
+                local holder = RValue.new_holder_scr(1)
+                holder[0] = RValue.new(obj)
+                local out = RValue.new(0)
+                gmf._mod_instance_number_func_ptr(nil, nil, out, 1, holder)
+                return RValue.to_wrapper(out)
+            end
+
+            benchmark("milliseconds", 5, 10000, gm._mod_instance_number, gm.constants.oP)
+            benchmark("milliseconds", 5, 10000, GM._mod_instance_number, gm.constants.oP)
+            benchmark("milliseconds", 5, 10000, foo, gm.constants.oP)
+            benchmark("milliseconds", 5, 10000, bar, gm.constants.oP)
+            benchmark("milliseconds", 5, 10000, Instance.count, gm.constants.oP)
+            benchmark("milliseconds", 5, 10000, Instance.count, gm.constants.oP)
         end
 
         if ImGui.Button("player count benchmark 2") then
-            -- Util.benchmark(100000, gm.instance_number, gm.constants.oP)
-            -- Util.benchmark(100000, GM.instance_number, gm.constants.oP)
-
-            -- jit.on(gmf.instance_number)
-
             local foo = function(obj)
                 local holder = RValue.new_holder(1)
                 holder[0] = RValue.new(obj)
@@ -107,22 +131,35 @@ gui.add_imgui(function()
                 gmf.instance_number(out, nil, nil, 1, holder)
                 return RValue.to_wrapper(out)
             end
+            
+            local holder = RValue.new_holder(1)
+            local out = RValue.new(0)
+            local bar = function(obj)
+                holder[0] = RValue.new(obj)
+                gmf.instance_number(out, nil, nil, 1, holder)
+                return RValue.to_wrapper(out)
+            end
 
-            benchmark("milliseconds", 5, 100000, gm.instance_number, gm.constants.oP)
-            benchmark("milliseconds", 5, 100000, GM.instance_number, gm.constants.oP)
-            benchmark("milliseconds", 5, 100000, foo, gm.constants.oP)
-            -- benchmark("milliseconds", 5, 100000, Instance.count, gm.constants.oP)
+            -- print(jit.status())
+
+            -- jit.on(gmf.instance_number)
+
+            benchmark("milliseconds", 5, 10000, gm.instance_number, gm.constants.oP)
+            benchmark("milliseconds", 5, 10000, GM.instance_number, gm.constants.oP)
+            benchmark("milliseconds", 5, 10000, foo, gm.constants.oP)
+            benchmark("milliseconds", 5, 10000, bar, gm.constants.oP)
+            benchmark("milliseconds", 5, 10000, gm.instance_number, gm.constants.oP)
         end
 
         if ImGui.Button("instance find player") then
-            benchmark("milliseconds", 5, 100000, gm.instance_find, gm.constants.oP, 0)
-            benchmark("milliseconds", 5, 100000, GM.instance_find, gm.constants.oP, 0)
+            benchmark("milliseconds", 5, 10000, gm.instance_find, gm.constants.oP, 0)
+            benchmark("milliseconds", 5, 10000, GM.instance_find, gm.constants.oP, 0)
             -- benchmark("milliseconds", 5, 100000, foo, gm.constants.oP)
         end
 
         if ImGui.Button("instance find player 2") then
-            benchmark("milliseconds", 5, 100000, gm._mod_instance_find, gm.constants.oP, 0)
-            benchmark("milliseconds", 5, 100000, GM._mod_instance_find, gm.constants.oP, 0)
+            benchmark("milliseconds", 5, 10000, gm._mod_instance_find, gm.constants.oP, 0)
+            benchmark("milliseconds", 5, 10000, GM._mod_instance_find, gm.constants.oP, 0)
             -- benchmark("milliseconds", 5, 100000, foo, gm.constants.oP)
             print(gm._mod_instance_find(gm.constants.oP, 0))
         end
@@ -344,15 +381,18 @@ gui.add_imgui(function()
             end
         end
 
-        if ImGui.Button("jit.on draw_circle") then
-            jit.on(gmf.draw_circle)
-        end
+        -- if ImGui.Button("jit.on draw_circle") then
+        --     jit.on(gmf.draw_circle)
+        -- end
 
-        if ImGui.Button("jit.off draw_circle") then
-            jit.off(gmf.draw_circle)
-        end
+        -- if ImGui.Button("jit.off draw_circle") then
+        --     jit.off(gmf.draw_circle)
+        -- end
         
         if ImGui.Button("Benchmark drawing") then
+            -- TODO apparently gmf drawing is faster now ??
+            -- get a Graphics class up
+
             local foo = function(x, y, r, outline)
                 local holder = RValue.new_holder(4)
                 holder[0] = RValue.new(x)
@@ -362,9 +402,99 @@ gui.add_imgui(function()
                 gmf.draw_circle(RValue.new(0), nil, nil, 4, holder)
             end
 
-            Util.benchmark(100000, gm.draw_circle, 0, 0, 10, false)
-            Util.benchmark(100000, GM.draw_circle, 0, 0, 10, false)
-            Util.benchmark(100000, foo, 0, 0, 10, false)
+            Util.benchmark(10000, gm.draw_circle, 0, 0, 10, false)
+            Util.benchmark(10000, GM.draw_circle, 0, 0, 10, false)
+            Util.benchmark(10000, foo, 0, 0, 10, false)
+            Util.benchmark(10000, Graphics.circle, 0, 0, 10, false)
+            Util.benchmark(10000, gm.draw_circle, 0, 0, 10, false)
+        end
+
+        if ImGui.Button("GM.instance_find") then
+            local inst = GM.instance_find(gm.constants.oP, 0)
+            print(inst)
+            -- print(inst, getmetatable(inst).__name, inst.id)
+            -- print(memory.get_usertype_pointer(inst))
+
+            local struct = gm.struct_create()
+            print(struct, getmetatable(struct).__name)
+            local pointer = memory.get_usertype_pointer(struct)
+            print(pointer)
+            local yyobj = ffi.cast("struct YYObjectBase*", pointer)
+            print("yyobj", yyobj)
+            local s1 = Struct.wrap_yyobjectbase(yyobj)
+            print("abc", s1.abc)
+            s1.abc = 1234
+            print("new abc", s1.abc)
+
+            local s2 = Struct.new()
+            print(s2.value)
+
+            local arr = gm.array_create(5, 10)
+            print(arr[1])
+            local pointer = memory.get_usertype_pointer(arr)
+            print(pointer)
+            local arr2 = Array.wrap_i64(pointer)
+            print(arr2[1])
+        end
+
+        if ImGui.Button("Give player 1 greenSquare") then
+            local p = Player.get_local()
+            if p:exists() then
+                p:item_give(Item.find("greenSquare"), 1)
+            end
+        end
+
+        if ImGui.Button("Give player 126 greenSquare") then
+            local p = Player.get_local()
+            if p:exists() then
+                p:item_give(Item.find("greenSquare"), 126)
+            end
+        end
+
+        if ImGui.Button("Move all t1 stages to t2 (error stream)") then
+            Stage.find("desolateForest"):set_tier(2)
+            Stage.find("driedLake"):set_tier(2)
+        end
+
+        if ImGui.Button("Move all t2 stages to t3") then
+            Stage.find("dampCaverns"):set_tier(3)
+            Stage.find("skyMeadow"):set_tier(3)
+        end
+
+        if ImGui.Button("Move Dried Lake to new tier 6") then
+            Stage.find("driedLake"):set_tier(6)
+        end
+
+        if ImGui.Button("Move Dried Lake back to tier 1") then
+            Stage.find("driedLake"):set_tier(1)
+        end
+
+        if ImGui.Button("Move Dried Lake to tier 100") then
+            Stage.find("driedLake"):set_tier(100)
+        end
+
+        if ImGui.Button("Stage.show_tiers") then
+            Stage.show_tiers()
+        end
+
+        if ImGui.Button("Instance set benchmark") then
+            local p = Player.get_local()
+            if not p:exists() then return end
+            local cinst = gm.instance_find(gm.constants.oP, 0)
+            if cinst == -4 then return end
+
+            print(p, cinst)
+
+            local function foo()
+                p.abc = 123
+            end
+
+            local function bar()
+                cinst.abc = 123
+            end
+
+            Util.benchmark(100000, foo)
+            Util.benchmark(100000, bar)
         end
 
     end

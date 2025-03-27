@@ -1,6 +1,7 @@
 -- Blue Circle
 
 local init = function()
+    -- Item 1
     local item = Item.new("blueCircle")
 
     item:set_sprite(Sprite.new("blueCircle", "~/blueCircle.png", 1, 16, 16))
@@ -26,40 +27,36 @@ local init = function()
         if actor:item_count(item) <= 0 then return end
     
         print("'blueCircle' ON_HIT_PROC")
-
-        for k, v in pairs(hit_info) do
-            print(k, v)
-        end
-
-        -- hit_info.damage = 100
-        -- hit_info.damage_fake = 100
-        -- hit_info.damage_true = 100
-
-        -- for k, v in pairs(hit_info) do
-        --     print(k, v)
-        -- end
-        
-
-        -- print(victim.hp)
-        -- print("Stack: "..actor:item_count(item))
-    
-        -- print(hit_info, hit_info.value, hit_info.RAPI)
-        -- print(hit_info.x)
-        -- hit_info.x = 123
-        -- print(hit_info.x)
-    
-        -- local inf = hit_info.inflictor
-        -- print(inf)
-        -- print(inf.value, inf.RAPI)
-    
-        -- local a = hit_info.attack_info
-        -- print(a)
-        -- print(a.value, a.RAPI)
-    
-        -- print(a.x)
-        -- a.x = 123
-        -- print(a.x)
     end)
+
+
+
+    -- Item 2
+    local item = Item.new("greenSquare")
+
+    item:set_sprite(Sprite.new("greenSquare", "~/greenSquare.png", 1, 16, 16))
+    item:set_tier(ItemTier.UNCOMMON)
+
+    ItemLog.new_from_item(item)
+
+    item:show_properties()
+
+    Callback.add(item.on_acquired, function(actor, stack)
+        print("'greenSquare' on_acquired")
+        print(actor, actor.value)
+        print("Stack: "..stack)
+    end)
+    
+    RecalculateStats.add(function(actor, api)
+        -- Shaped Glass
+        local stack = actor:item_count(item)
+        for i = 1, stack do
+            api.maxhp_mult(0.5)
+            api.damage_mult(2)
+        end
+    end)
+
+
 
     item_hotloaded = true
 end
