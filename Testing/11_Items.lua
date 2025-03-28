@@ -29,6 +29,13 @@ local init = function()
         print("'blueCircle' ON_HIT_PROC")
     end)
 
+    local angle = 0
+    local dist = 48
+    item.effect_display = EffectDisplay.func(function(actor, draw_x, draw_y)
+        angle = angle + 0.025
+        gm.draw_circle(draw_x + math.cos(angle)*dist, draw_y - math.sin(angle)*dist, 12, false)
+    end, EffectDisplay.DrawPriority.ABOVE_BODY)
+
 
 
     -- Item 2
