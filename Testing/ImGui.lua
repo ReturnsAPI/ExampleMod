@@ -197,7 +197,7 @@ gui.add_imgui(function()
             print(bar(gm.constants.oP))
         end
 
-        if ImGui.Button("Find player") then
+        if ImGui.Button("Find and kill player") then
             local p = Instance.find(gm.constants.oP)
             print(p)
             print(p.value, p.id, type(p))
