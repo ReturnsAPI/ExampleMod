@@ -33,7 +33,7 @@ local init = function()
     local dist = 48
     item.effect_display = EffectDisplay.func(function(actor, draw_x, draw_y)
         angle = angle + 0.025
-        gm.draw_circle(draw_x + math.cos(angle)*dist, draw_y - math.sin(angle)*dist, 12, false)
+        Draw.circle(draw_x + math.cos(angle)*dist, draw_y - math.sin(angle)*dist, 12, false, Color.AQUA)
     end, EffectDisplay.DrawPriority.ABOVE_BODY)
 
 

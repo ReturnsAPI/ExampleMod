@@ -390,9 +390,6 @@ gui.add_imgui(function()
         -- end
         
         if ImGui.Button("Benchmark drawing") then
-            -- TODO apparently gmf drawing is faster now ??
-            -- get a Graphics class up
-
             local foo = function(x, y, r, outline)
                 local holder = RValue.new_holder(4)
                 holder[0] = RValue.new(x)
@@ -402,10 +399,15 @@ gui.add_imgui(function()
                 gmf.draw_circle(RValue.new(0), nil, nil, 4, holder)
             end
 
+            print("gm")
             Util.benchmark(10000, gm.draw_circle, 0, 0, 10, false)
+            print("GM")
             Util.benchmark(10000, GM.draw_circle, 0, 0, 10, false)
+            print("foo")
             Util.benchmark(10000, foo, 0, 0, 10, false)
-            Util.benchmark(10000, Graphics.circle, 0, 0, 10, false)
+            print("Draw")
+            Util.benchmark(10000, Draw.circle, 0, 0, 10, false)
+            print("gm")
             Util.benchmark(10000, gm.draw_circle, 0, 0, 10, false)
         end
 
