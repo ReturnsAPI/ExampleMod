@@ -1,6 +1,6 @@
 -- ExampleMod
 
--- mods["LuaENVY-ENVY"].auto()  -- Seems to break hotloading
+mods["LuaENVY-ENVY"].auto()
 mods["ReturnsAPI-ReturnsAPI"].auto()
 gmf = require("ReturnOfModding-GLOBAL/gmf")
 
