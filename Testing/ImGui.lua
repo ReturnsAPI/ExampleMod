@@ -1,5 +1,7 @@
 -- ImGui
 
+-- if true then return true end    -- debug
+
 do
     local units = {
         ['seconds'] = 1,
@@ -204,6 +206,14 @@ gui.add_imgui(function()
             print("hp", p.hp)
             p:actor_kill()
             print("new hp", p.hp)
+        end
+
+        if ImGui.Button("Spawn 1 Lemurian on the player") then
+            local p = Player.get_local()
+            if p:exists() then
+                local obj = Object.find("lizard")
+                obj:create(p.x, p.y)
+            end
         end
 
         if ImGui.Button("Spawn 10 Lemurians on the player") then
@@ -499,9 +509,409 @@ gui.add_imgui(function()
             Util.benchmark(100000, bar)
         end
 
+        if ImGui.Button("What is the type for ref?") then
+            local holder = RValue.new_holder(2)
+            holder[0] = RValue.new(gm.constants.oP)
+            holder[1] = RValue.new(0)
+            local out = RValue.new(0)
+            gmf.instance_find(out, nil, nil, 2, holder)
+            print(out, out.i32, out.i64, out.type)  -- cdata<struct RValue>: 0x0155d91a7e20 101153  9221120237041192480LL   15
+                                                    -- Existn't:  cdata<struct RValue>: 0x0155d91a7e98  -4  -4607182418800017408LL  0
+        end
+
+        if ImGui.Button("CInstance vs Instance") then
+            local holder = RValue.new_holder(2)
+            holder[0] = RValue.new(gm.constants.oP)
+            holder[1] = RValue.new(0)
+            local out = RValue.new(0)
+            gmf.instance_find(out, nil, nil, 2, holder)
+            
+            local inst = RValue.to_wrapper(out)
+            -- local inst2 = ffi.cast("struct CInstance*", out.i64)
+            local what = gm.CInstance.instance_id_to_CInstance_ffi[inst.id]
+            -- print(out.i64, what)
+            local inst2 = ffi.cast("struct CInstance*", what)
+            local inst3 = gm.instance_find(gm.constants.oP, 0)
+
+            function foo()
+                local a = inst.x
+                -- inst.x = inst.x + 0.001
+            end
+            function bar()
+                local a = inst2.x
+                -- inst2.x = inst2.x + 0.001
+            end
+            function bar2()
+                local a = inst3.x
+                -- inst3.x = inst3.x + 0.001
+            end
+
+            print(inst, inst2, inst3)
+
+            print(inst.x, inst2.x)
+            Util.benchmark(100000, foo)
+            Util.benchmark(100000, bar)
+            Util.benchmark(100000, bar2)
+            print(inst.x, inst2.x)
+        end
+
+        if ImGui.Button("a") then
+            print("=== a ===")
+            Util.benchmark(100000, Instance.find, gm.constants.oP)
+            Util.benchmark(100000, GM.instance_find, gm.constants.oP, 0)
+            Util.benchmark(100000, gm.instance_find, gm.constants.oP, 0)
+            Util.benchmark(100000, GM.instance_find, gm.constants.oLizard, 0)
+            Util.benchmark(100000, gm.instance_find, gm.constants.oLizard, 0)
+        end
+
+
+        if ImGui.Button("b") then
+            print("=== b ===")
+            Util.benchmark(100000, Instance.exists, -4)
+            Util.benchmark(100000, GM.instance_exists, -4)
+            Util.benchmark(100000, gm.instance_exists, -4)
+        end
+
+
+        if ImGui.Button("c - item_count") then
+            local p = Instance.find(gm.constants.oP)
+            if not p:exists() then return end
+            print(p:item_count(0, 3))
+
+            print("=== c ===")
+            Util.benchmark(100000, p.item_count, p, 0, 3)
+        end
+
+
+        if ImGui.Button("d") then
+            local p = Instance.find(gm.constants.oP)
+            if not p:exists() then return end
+            
+            local foo = function(p)
+                return p.CInstance
+            end
+
+            local bar = function(p)
+                return ffi.cast("struct CInstance*", gm.CInstance.instance_id_to_CInstance_ffi[p.value])
+            end
+
+            print("=== d ===")
+            Util.benchmark(100000, foo, p)
+            Util.benchmark(100000, bar, p)
+        end
+
+
+        if ImGui.Button("give a meatNugget") then
+            local p = Instance.find(gm.constants.oP)
+            if not p:exists() then return end
+            p:item_give(0, 1, Item.StackKind.TEMPORARY_BLUE)
+        end
+
+
+        if ImGui.Button("take a meatNugget") then
+            local p = Instance.find(gm.constants.oP)
+            if not p:exists() then return end
+            p:item_take(0, 1, 0)
+        end
+
+        
+        if ImGui.Button("create like 100000 tables") then
+            for i = 1, 100000 do
+                local a = {}
+            end
+            print("done")
+        end
+
+
+        if ImGui.Button("add callback") then
+            var1 = Callback.add(Callback.ON_DEATH, function(actor, died_to_void)
+                print("2", actor, died_to_void)
+            end, -10)
+            var2 = Callback.add(Callback.ON_DEATH, function(actor, died_to_void)
+                print("1", actor, died_to_void)
+            end)
+        end
+
+
+        if ImGui.Button("remove callbacks") then
+            Callback.remove(var1)
+            Callback.remove(var2)
+        end
+
+
+        if ImGui.Button("print meatNugget properties") then
+            Item.find("meatNugget"):show_properties()
+        end
+
+
+        if ImGui.Button("filter items by tier 0") then
+            local commons = Item.find_all(0, Item.Property.TIER)
+            for _, v in ipairs(commons) do
+                print(v.identifier)
+            end
+        end
+
+
+        if ImGui.Button("Benchmark Item.find_all 2") then
+            Util.benchmark(10000, Item.find_all, "ror")
+            Util.benchmark(10000, Item.find_all, 0, Item.Property.TIER)
+        end
+
+
+        if ImGui.Button("print tier/pool properties") then
+            ItemTier.find("uncommon"):show_properties()
+            LootPool.find("uncommon"):show_properties()
+
+            local arr = ItemTier.find("uncommon").pickup_head_shape
+            for i, v in ipairs(arr) do
+                print(i, v)
+                for j, w in ipairs(v) do
+                    print(" ", j, w)
+                end
+            end
+
+            -- Set common lootpool to be uncommon loot pool
+            -- LootPool.find("common").drop_pool = LootPool.find("uncommon").drop_pool
+        end
+
+
+        if ImGui.Button("Script.bind test to var1") then
+            local foo = function()
+                print("Bound function run!")
+            end
+
+            var1 = Script.bind(foo)
+            Util.print(var1, var1.self, var1.other)
+            var1()
+        end
+
+
+        if ImGui.Button("Run var1") then
+            var1()
+        end
+
+
+        if ImGui.Button("Struct.print test") then
+            local struct = Struct.new()
+            struct.def = 123
+            struct.ghi = 456
+            struct:print()
+
+            local array = Array.new(10)
+            array[4] = 123
+            array:print()
+        end
+
+
+        if ImGui.Button("instance_number once (1)") then
+            print(GM.instance_number(gm.constants.oP))
+        end
+
+        
+        if ImGui.Button("_mod_instance_number once (1)") then
+            print(GM._mod_instance_number(gm.constants.oP))
+        end
+
+
+        if ImGui.Button("_mod_net_message_begin") then
+            local b = GM._mod_net_message_begin()
+            print(b)    -- is a number
+
+            -- local b = Buffer._mod_net_message_begin()
+            -- print(b)
+
+            local holder = RValue.new_holder(1)
+            holder[0] = RValue.new(10000)
+            local out = RValue.new(0)
+            gmf.buffer_exists(out, nil, nil, 1, holder)
+            RValue.peek(out)
+        end
+
+
+        if ImGui.Button("Player fire bullet") then
+            local p = Player.get_local()
+            if not p:exists() then return end
+            p:fire_bullet(p.x, p.y, 1000, 90 - (p.image_xscale * 90), 1)
+
+            print(p:is_grounded())
+            print(p:is_climbing())
+        end
+
+
+        if ImGui.Button("Player fire bullet benchmark") then
+            local p = Player.get_local()
+            if not p:exists() then return end
+            Util.benchmark(500, p.fire_bullet,
+                p, p.x, p.y, 1000, 90 - (p.image_xscale * 90), 1, 0.5
+            )
+        end
+
+
+        if ImGui.Button("recalc stats") then
+            local p = Player.get_local()
+            if not p:exists() then return end
+            for i = 1, 100 do p:recalculate_stats() end
+        end
+
     end
     ImGui.End()
 end)
+
+Hook.add("gml_Object_oInit_Draw_73", Hook.POST, function(self, other)
+    -- print("gml_Object_oInit_Draw_73 - post")
+    -- print(self)
+    -- print(other)
+    Draw.circle(200, 200, 50)
+end)
+
+-- Hook.add("instance_number", Hook.PRE, function(self, other, result, args)
+--     print("instance_number - pre")
+--     print(self)
+--     print(other)
+--     print(result.value)
+--     print(args)
+
+--     result.value = 1
+-- end)
+
+Hook.add("instance_number", Hook.POST, function(self, other, result, args)
+    print("instance_number - post")
+    print(self)
+    print(other)
+    print(result.value)
+    print(args)
+
+    -- result.value = 1
+end)
+
+Hook.add("damager_calculate_damage", Hook.POST, function(self, other, result, args)
+    Util.gm_trace()
+end)
+
+-- Hook.add("instance_create", Hook.PRE, function(self, other, result, args)
+--     print("instance_create - pre")
+--     print(self)
+--     print(other)
+--     print(result)
+--     for i, v in ipairs(args) do
+--         print(i, v)
+--     end
+
+--     args[2] = args[2] - 100
+-- end)
+
+-- Hook.add("_mod_instance_number", Hook.PRE, function(self, other, result, args)
+--     print("_mod_instance_number - pre")
+--     print(self)
+--     print(other)
+--     print(result)
+--     print(args)
+-- end)
+
+-- Hook.add("_mod_instance_number", Hook.POST, function(self, other, result, args)
+--     print("_mod_instance_number - post")
+--     print(self)
+--     print(other)
+--     print(result)
+--     print(args)
+-- end)
+
+-- memory.dynamic_hook("examplemod.instance_number", "void*", {"void*", "void*", "void*", "int", "void*"}, gm.get_script_function_address(gm.constants.instance_number),
+--     -- Pre-hook
+--     {function(ret_val, result, self, other, arg_count, args)
+--         local arg_count = arg_count:get()
+--         local args_typed = ffi.cast("struct RValue*", args:get_address())
+
+--         print("args_typed[0]", args_typed[0])
+--         print(args_typed[0].type)
+--         print(args_typed[0].value)
+--     end,
+
+--     -- Post-hook
+--     function(ret_val, result, self, other, arg_count, args)
+--         local arg_count = arg_count:get()
+--         local args_typed = ffi.cast("struct RValue*", args:get_address())
+
+--         print("post args_typed[0]", args_typed[0])
+--         print(args_typed[0].type)
+--         print(args_typed[0].value)
+--     end}
+-- )
+
+-- memory.dynamic_hook("examplemod._mod_instance_number", "void*", {"void*", "void*", "void*", "int", "void*"}, gm.get_script_function_address(gm.constants._mod_instance_number),
+--     -- Pre-hook
+--     {function(ret_val, self, other, result, arg_count, args)
+--         local arg_count = arg_count:get()
+--         local args_typed = ffi.cast("struct RValue**", args:get_address())
+
+--         -- Cast and wrap `self`
+--         local self_address = self:get_address()
+--         print("self_address", self_address)
+--         local self_cdata = ffi.cast("YYObjectBase *", self_address)
+--         print("self_cdata", self_cdata)
+--     end,
+
+--     -- Post-hook
+--     nil}
+-- )
+
+-- memory.dynamic_hook("examplemod_find", "void*", {"void*", "void*", "void*", "int", "void*"}, gm.get_script_function_address(gm.constants.instance_find),
+--     -- Pre-hook
+--     {nil,
+
+--     -- Post-hook
+--     function(ret_val, self, other, result, arg_count, args)
+--         local res = nil
+--         local address = result:get_address()
+--         print(address)
+--         if address ~= 0 then res = ffi.cast("CInstance*", address) end
+--         if res then print("res", res.hp) end
+--     end}
+-- )
+
+-- Hook.add("instance_find", Hook.POST, function(self, other, result, args)
+--     print("instance_find")
+--     print(self)
+--     print(other)
+--     print(result)
+--     for i, v in ipairs(args) do
+--         print(i, v)
+--     end
+-- end)
+
+-- Hook.add("instance_create", Hook.POST, function(self, other, result, args)
+--     print("instance_create")
+--     print(self)
+--     print(other)
+--     print(result)
+--     for i, v in ipairs(args) do
+--         print(i, v)
+--     end
+-- end)
+
+-- memory.dynamic_hook("ExampleMod.instance_create", "void*", {"void*", "void*", "void*", "int", "void*"}, gm.get_script_function_address(gm.constants.instance_create),
+--     -- Pre-hook
+--     {function(ret_val, self, other, result, arg_count, args)
+--         print("Create!")
+--     end,
+
+--     -- Post-hook
+--     function(ret_val, self, other, result, arg_count, args)
+--         -- print("Create!")
+--     end}
+-- )
+
+-- memory.dynamic_hook("ExampleMod.skill_recalculate_stats", "void*", {"void*", "void*", "void*", "int", "void*"}, gm.get_script_function_address(gm.constants.anon_ActorSkill_gml_GlobalScript_scr_actor_skills_83921016_ActorSkill_gml_GlobalScript_scr_actor_skills),
+--     -- Pre-hook
+--     {function(ret_val, self, other, result, arg_count, args)
+--         -- self = nil  -- Does nothing?
+--     end,
+
+--     -- Post-hook
+--     function(ret_val, self, other, result, arg_count, args)
+        
+--     end}
+-- )
 
 -- Return status
 return true
