@@ -614,6 +614,13 @@ gui.add_imgui(function()
             p:item_take(0, 1, 0)
         end
 
+
+        if ImGui.Button("give 5 ghearts") then
+            local p = Instance.find(gm.constants.oP)
+            if not p:exists() then return end
+            p:item_give(Item.find("guardiansHeart"), 5)
+        end
+
         
         if ImGui.Button("create like 100000 tables") then
             for i = 1, 100000 do
@@ -753,15 +760,370 @@ gui.add_imgui(function()
             for i = 1, 100 do p:recalculate_stats() end
         end
 
+
+        if ImGui.Button("save player for hotload") then
+            if not saved_player then
+                local p = Player.get_local()
+                if not p:exists() then return end
+                saved_player = p
+            end
+
+            if saved_player then
+                print(saved_player)
+                print(saved_player:test())
+            end
+        end
+
+
+        if ImGui.Button("call new Actor.test") then
+            Actor.test()
+        end
+
+
+        if ImGui.Button("Make and store new array") then
+            var3 = Array.new()
+            var3[1] = 1234
+
+            for k, v in pairs(var3) do
+                print(k, v)
+            end
+        end
+
+
+        if ImGui.Button("Check if array exists") then
+            print(var3, var3[1])
+        end
+
+
+        if ImGui.Button("map:set test") then
+            local m = Map.new()
+            Util.benchmark(10000, m.set, m, "abc", 123)
+            m:destroy()
+        end
+
+
+        if ImGui.Button("Spawn 1 target dummy") then
+            local player = Player.get_local()
+            if player:exists() then
+                local obj = Object.find("dummy")
+                local inst = obj:create(player.x, player.y)
+                inst.depth = 2
+                inst.hp = 1000000000
+                inst.maxhp, inst.maxhp_base = inst.hp, inst.hp
+            end
+        end
+
+
+        if ImGui.Button("what") then
+            local res = GM.team_canhit(3, 3)   -- attacking_team, target_team
+            print(res)
+            print(GM.team_get_name(3))
+            print(GM.actor_canhit(Player.get_local(), Player.get_local()))  -- attacker, target
+        end
+
+
+        if ImGui.Button("get_collisions benchmark") then
+            local p = Player.get_local()
+            if not p:exists() then return end
+            Util.benchmark(1000, p.get_collisions, p, gm.constants.oDummy)
+        end
+
+
+        if ImGui.Button("give player 1 whimstar") then
+            local p = Player.get_local()
+            if not p:exists() then return end
+            p:item_give(Item.find("whimsicalStar", "aphelion"))
+        end
+
+
+        if ImGui.Button("_mod_instance_find") then
+            -- local p = GM._mod_instance_find(gm.constants.oP, 1)
+            -- print(p)
+
+            -- local i = GM._mod_instance_find(Object.find("whimsicalStarObject", "aphelion"), 1)
+            -- print(i)
+            -- i.y = i.y - 100
+
+            local star = Instance.find(Object.find("whimsicalStarObject", "aphelion"))
+            if star:exists() then
+                star.y = star.y - 100
+            end
+
+            print(Instance.count(Object.find("whimsicalStarObject", "aphelion")))
+            
+            -- local p = GM._mod_instance_findAll(gm.constants.oP)
+            -- print(p)
+
+            -- local p = GM._mod_instance_nearest(gm.constants.oP, 0, 0)
+            -- print(p)
+
+            -- local i = GM._mod_instance_nearest(Object.find("whimsicalStarObject", "aphelion"), 0, 0)
+            -- print(i)
+
+            -- local i = GM.instance_find(Object.find("whimsicalStarObject", "aphelion"), 0)
+            -- print(i)
+
+            -- local arr = Array.new()
+            -- print(#arr)
+            -- GM.instance_nearest_array(gm.constants.oP, 0, 0, arr)
+            -- print(#arr)
+        end
+
+
+        if ImGui.Button("instance find benchmark!!") then
+            print(GM.instance_find(gm.constants.oP, 0))
+            print(GM._mod_instance_nearest(gm.constants.oP, 0, 0))
+
+            Util.benchmark(10000, GM.instance_find, gm.constants.oP, 0) -- instance_find is faster so use for non-custom objs
+            Util.benchmark(10000, GM._mod_instance_nearest, gm.constants.oP, 0, 0)
+            Util.benchmark(10000, GM.instance_find, gm.constants.oP, 0)
+            Util.benchmark(10000, GM._mod_instance_nearest, gm.constants.oP, 0, 0)
+        end
+
+
+        if ImGui.Button("lua_place_meeting") then
+            local p = Player.get_local()
+            print(GM.SO.lua_place_meeting(p, nil, p.x, p.y, gm.constants.oLizard))
+            print(GM.SO.lua_place_meeting(p, nil, p.x, p.y, Object.find("whimsicalStarObject", "aphelion")))
+
+            -- print(GM.SO.lua_instance_place(p, nil, p.x, p.y, gm.constants.oLizard, gm.constants.oLizard))    -- crash
+            
+            -- works?? but always returns the instance
+            print(GM.SO.lua_instance_place(p, nil, p.x, p.y, Object.find("whimsicalStarObject", "aphelion"), Object.find("whimsicalStarObject", "aphelion")))
+            
+            -- print(GM.SO.lua_instance_place(p, nil, p.x, p.y, Object.find("whimsicalStarObject", "aphelion"), 1)) -- crash
+        end
+
+
+        if ImGui.Button("Instance.find") then
+            print(Instance.find(gm.constants.oP))
+
+            local star = Instance.find(Object.find("whimsicalStarObject", "aphelion"))
+            print(star)
+            if star:exists() then
+                star.y = star.y - 10
+            end
+            
+            print(Instance.find(10000).value)
+        end
+
+        if ImGui.Button("Instance.find_all benchmark") then
+            -- local insts = Instance.find_all(Object.find("whimsicalStarObject", "aphelion"))
+            -- for _, inst in ipairs(insts) do
+            --     inst.y = inst.y - 20
+            -- end
+
+            -- local obj = Object.find("whimsicalStarObject", "aphelion")
+            -- Util.benchmark(10000, Instance.find_all, obj)
+
+            -- Given 100 Lemurians, logically the first benchmark
+            -- should run about 100x faster (give or take) than the second
+            Util.benchmark(10000, Instance.find, gm.constants.oLizard)
+            Util.benchmark(10000, Instance.find_all, gm.constants.oLizard)
+        end
+
+        if ImGui.Button("get_collisions benchmarks") then
+            local p = Player.get_local()
+            if not p:exists() then return end
+            Util.benchmark(10000, p.get_collisions, p, gm.constants.oLizard)
+            -- Util.benchmark(10000, p.get_collisions_2, p, gm.constants.oLizard)
+            -- Util.benchmark(10000, p.get_collisions, p, gm.constants.oLizard)
+            -- Util.benchmark(10000, p.get_collisions_2, p, gm.constants.oLizard)
+            print(#p:get_collisions(gm.constants.oLizard))
+            -- print(#p:get_collisions_2(gm.constants.oLizard))
+        end
+
+        if ImGui.Button("get_collisions custom test") then
+            local p = Player.get_local()
+            if not p:exists() then return end
+
+            local obj = Object.find("whimsicalStarObject", "aphelion")
+            local insts = p:get_collisions(obj)
+            print(#insts)
+
+            Util.benchmark(10000, p.get_collisions, p, obj)
+        end
+
+        if ImGui.Button("is_colliding tests") then
+            local p = Player.get_local()
+            if not p:exists() then return end
+
+            print(p:is_colliding(gm.constants.oLizard))
+
+            local obj = Object.find("whimsicalStarObject", "aphelion")
+            local bool = p:is_colliding(obj)
+            print(bool)
+
+            Util.benchmark(10000, p.is_colliding, p, gm.constants.oLizard)
+            Util.benchmark(10000, p.is_colliding, p, obj)
+        end
+
+        if ImGui.Button("_mod_instance_findAll test") then
+            -- local obj = Object.find("whimsicalStarObject", "aphelion")
+            -- GM._mod_instance_findAll(obj)
+            GM._mod_instance_findAll(gm.constants.oLizard)
+            -- print("a", gm.constants.oLizard)
+            
+            -- print("a", GM._mod_instance_findAll(gm.constants.oJelly))
+            -- print("a", gm.constants.oJelly)
+        end
+
+        if ImGui.Button("print balls") then
+            -- print(balls)
+
+            Util.benchmark(10000, GM._mod_instance_findAll, gm.constants.oLizard)   -- lower than should be since
+                                                                                    -- calling GM instead of dedicated
+        end
+
+        if ImGui.Button("spawn magma worm") then
+            local p = Player.get_local()
+            if not p:exists() then return end
+            Object.find("worm"):create(p.x, p.y)
+        end
+
+        -- if ImGui.Button("Instance.find_all benchmark 2") then
+        --     print(#Instance.find_all(gm.constants.oLizard))
+        --     print(#Instance.find_all_2(gm.constants.oLizard))
+
+        --     Util.benchmark(1000, Instance.find_all, gm.constants.oLizard)
+        --     Util.benchmark(1000, Instance.find_all_2, gm.constants.oLizard)
+        --     Util.benchmark(1000, Instance.find_all, gm.constants.oLizard)
+        --     Util.benchmark(1000, Instance.find_all_2, gm.constants.oLizard)
+        -- end
+
     end
     ImGui.End()
 end)
+
+Hook.add("damager_calculate_damage", Hook.PRE,
+    function(self, other, result, args)
+        for i, v in ipairs(args) do
+            print(i, v)
+        end
+        print("-----")
+
+        -- `true_hit` is the actual instance hit
+        -- `hit` is the actor hit (which `true_hit` might be a part of, like with worm segments)
+    end
+)
+
+local ptr = gm.get_script_function_address(gm.constants.damager_calculate_damage)
+-- memory.dynamic_hook_mid("_mod_instance_findAll_vanilla", {"rax"}, {"RValue*"}, 0, ptr:add(0x3BE), Util.jit_off(function(args)
+--     -- print(args[1].value, args[1].type, getmetatable(args[1]).__name)
+--     args[1].value = 1000000
+--     -- print(args[1].value.id)
+--     -- print(GM.object_get_name(args[1].value.object_index))
+-- end))
+
+memory.dynamic_hook_mid("_mod_instance_findAll_vanilla", {"r14", "rsp+128h", "rbp+20h"}, {"RValue**", "RValue**", "RValue*"}, 0, ptr:add(0x438D), Util.jit_off(function(args)
+    -- Get argument array (stored in register `r14` of type `RValue**`)
+    local args_typed = ffi.cast("struct RValue**", args[1]:get_address())
+    args_typed[3].value = 1000000   -- arg 3 is `damage`
+
+    -- print("args_typed_2")
+    -- local args_typed_2 = ffi.cast("struct RValue**", args[2]:get_address())
+    -- print(args_typed_2[0], getmetatable(args_typed_2[0]).__name)
+    -- print(GM.object_get_name(Instance.wrap(args_typed_2[1].i32).object_index))  -- oP
+    -- print(GM.object_get_name(Instance.wrap(args_typed_2[2].i32).object_index))  -- oDummy
+    -- print(args_typed_2[3], getmetatable(args_typed_2[3]).__name)
+    -- print(args_typed_2[4], getmetatable(args_typed_2[4]).__name)
+    
+    -- print("args_typed_3")
+    -- local args_typed_3 = ffi.cast("struct RValue**", args[3]:get_address())
+    -- print(args_typed_3[0], getmetatable(args_typed_3[0]).__name)
+    -- print(args_typed_3[1], getmetatable(args_typed_3[1]).__name)
+    -- print(args_typed_3[2], getmetatable(args_typed_3[2]).__name)
+    -- print(args_typed_3[3], getmetatable(args_typed_3[3]).__name)
+    -- print(args_typed_3[4], getmetatable(args_typed_3[4]).__name)
+    -- print(args_typed_3[5], getmetatable(args_typed_3[5]).__name)
+    -- print(args_typed_3[6], getmetatable(args_typed_3[6]).__name)
+    -- print(args_typed_3[7], getmetatable(args_typed_3[7]).__name)
+    -- print(args_typed_3[8], getmetatable(args_typed_3[8]).__name)
+    
+    args[3].value = 1000000
+    print(args[3].value)    -- damage_fake !!!
+
+    -- print("args_typed_4")
+    -- local args_typed_4 = ffi.cast("struct RValue**", args[3]:get_address())
+    -- print(args_typed_4[0], getmetatable(args_typed_4[0]).__name)
+end))
+
+-- local ptr = gm.get_script_function_address(gm.constants._mod_instance_findAll)
+-- 
+-- Memory.dynamic_hook("_mod_instance_findAll", "void*", {"void*", "void*", "void*", "int", "void*"}, ptr,
+--     -- Pre-hook
+--     {function(ret_val, self, other, result, arg_count, args)
+--         print("pre")
+--         -- insts = {}
+--     end,
+
+--     -- Post-hook
+--     function(ret_val, self, other, result, arg_count, args)
+--         -- Return this somehow for actual fn
+--         print("post")
+--         -- for _, inst in ipairs(insts) do
+--         --     print(inst)
+--         -- end
+--     end}
+-- )
+
+-- -- -- TODO
+
+-- -- -- local fn = function(args)
+-- -- --     print("find custom")
+-- -- --     print(args[1].value)
+-- -- -- end
+-- -- -- jit.off(fn)
+-- -- -- memory.dynamic_hook_mid("ExampleMod._mod_instance_findAll_custom", {"rdi"}, {"RValue*"}, 0, ptr:add(0x304), fn)
+
+-- Memory.dynamic_hook_mid("_mod_instance_findAll_vanilla", {"rsp+50h"}, {"RValue*"}, 0, ptr:add(0x44E), function(args)
+--     print("find vanilla")
+
+--     -- -- print(args[1].value, getmetatable(args[1].value).__name)    -- sol.CInstance*
+--     -- -- print(args[1].value.id)
+
+--     -- table.insert(insts, Instance.wrap(args[1].value.id))    -- might be slow since sol
+-- end)
+
+
+
+-- local fn = function(args)
+--     print("find vanilla 2")
+--     print(args[1].value)
+--     print(args[1].type)
+-- end
+-- jit.off(fn)
+-- memory.dynamic_hook_mid("ExampleMod._mod_instance_findAll.25", {"rsp+88h"}, {"RValue*"}, 0, ptr:add(0x474), fn)
+
+-- local fn = function(args)
+--     print("find vanilla 123")
+--     print(args[1].value, getmetatable(args[1].value).__name)
+-- end
+-- jit.off(fn)
+-- memory.dynamic_hook_mid("Examp123213", {"rsp+138h"}, {"RValue*"}, 0, ptr:add(0x474), fn)
+
+-- memory.dynamic_hook_mid("ExampleMod._mod_instance_findAll.25", {"^32.8"}, {"RValue*"}, 0, ptr:add(0x474), function(args)
+--     print("find vanilla")
+--     print(args[1].value)
+-- end)
+
+-- memory.dynamic_hook_mid("ExampleMod._mod_instance_findAll.2", {}, {}, 0, ptr:add(0x474), function(args)
+--     print("find vanilla plsss")
+-- end)
 
 Hook.add("gml_Object_oInit_Draw_73", Hook.POST, function(self, other)
     -- print("gml_Object_oInit_Draw_73 - post")
     -- print(self)
     -- print(other)
     Draw.circle(200, 200, 50)
+end)
+
+Hook.add("team_canhit", Hook.POST, function(self, other, result, args)
+    print("team_canhit - post")
+    print(self)
+    print(other)
+    print(result.value)
+    print(args)
 end)
 
 -- Hook.add("instance_number", Hook.PRE, function(self, other, result, args)
@@ -784,9 +1146,9 @@ Hook.add("instance_number", Hook.POST, function(self, other, result, args)
     -- result.value = 1
 end)
 
-Hook.add("damager_calculate_damage", Hook.POST, function(self, other, result, args)
-    Util.gm_trace()
-end)
+-- Hook.add("damager_calculate_damage", Hook.POST, function(self, other, result, args)
+--     Util.gm_trace()
+-- end)
 
 -- Hook.add("instance_create", Hook.PRE, function(self, other, result, args)
 --     print("instance_create - pre")

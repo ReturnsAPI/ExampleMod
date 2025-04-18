@@ -64,7 +64,7 @@ local function init()
         end
     )
 end
-Initialize(init)
+Initialize.add(init)
 if network_hotloaded then init() end
 
 -- Return status

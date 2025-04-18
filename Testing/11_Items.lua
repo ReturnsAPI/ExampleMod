@@ -67,7 +67,7 @@ local init = function()
 
     item_hotloaded = true
 end
-Initialize(init)
+Initialize.add(init)
 if item_hotloaded then init() end
 
 -- Return status

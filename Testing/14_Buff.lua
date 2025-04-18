@@ -23,7 +23,7 @@ local init = function()
 
     buff_hotloaded = true
 end
-Initialize(init)
+Initialize.add(init)
 if buff_hotloaded then init() end
 
 -- Return status
