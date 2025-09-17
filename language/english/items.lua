@@ -1,0 +1,13 @@
+return {
+    item = {
+        blueCircle = {
+            name        = "Blue Circle",
+            pickup      = "Increases maximum health by 10, and grants a chance to fire chain lightning on hit.",
+            description = "Increases <g>maximum health </c>by <g>10 <c_stack>(+10 per stack)</c>.\nOn hit, <y>25% chance</c> to fire <y>chain lightning</c> for <y>20% <c_stack>(+20% per stack) <y>TOTAL damage</c> on up to <y>3</c> targets.",
+            destination = "Some place",
+            date        = "01/01/2056",
+            story       = "Lore entry",
+            -- priority    = "Standard"
+        },
+    }
+}

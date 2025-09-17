@@ -1,4 +1,4 @@
-Each type of content should be in its own branch, based on `main`.
+Description
 
 ---
 
