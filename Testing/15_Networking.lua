@@ -17,25 +17,52 @@ gui.add_imgui(function()
 
         if ImGui.Button("Host: Send to clients inst") then
             local p = Player.get_local()
-            if not p:exists() then return end
+            if not Instance.exists(p) then return end
             packet2:send_to_all(p)
         end
 
         if ImGui.Button("Client: Send to host inst") then
             local p = Player.get_local()
-            if not p:exists() then return end
+            if not Instance.exists(p) then return end
             packet2:send_to_host(p)
         end
 
         if ImGui.Button("Fire bullet") then
             local p = Player.get_local()
-            if not p:exists() then return end
-            p:fire_bullet(p.x, p.y, 1000, 90 - (p.image_xscale * 90), 1, nil, nil, AttackInfo.Tracer.BANDIT1)
+            if not Instance.exists(p) then return end
+            p:fire_bullet(p.x, p.y, 1000, 90 - (p.image_xscale * 90), 1, nil, nil, Tracer.BANDIT1)
         end
 
     end
     ImGui.End()
 end)
+
+-- DamageCalculate.add(function(api)
+--     if not Net.is_online() then return end
+
+--     local hook_args_names = {
+--         "hit_info",
+--         "true_hit",
+--         "hit",
+--         "damage",
+--         "critical",
+--         "parent",
+--         "proc",
+--         "attack_flags",
+--         "damage_col",
+--         "team",
+--         "climb",
+--         "percent_hp",
+--         "xscale",
+--         "hit_x",
+--         "hit_y",
+--     }
+    
+--     print("")
+--     for _, k in ipairs(hook_args_names) do
+--         print(k, api[k])
+--     end
+-- end)
 
 local function init()
     network_hotloaded = true

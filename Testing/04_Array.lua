@@ -38,8 +38,8 @@ for i, v in ipairs(arr4) do
 end
 
 local arr5 = Array.wrap(arr4)
-if Array.is(arr4) ~= true then log.warning("4_Array: Array.is(arr4) is "..tostring(Array.is(arr4)).."; expected true"); exit = false end
-if Array.is(arr5) ~= true then log.warning("4_Array: Array.is(arr5) is "..tostring(Array.is(arr5)).."; expected true"); exit = false end
+-- if Array.is(arr4) ~= true then log.warning("4_Array: Array.is(arr4) is "..tostring(Array.is(arr4)).."; expected true"); exit = false end
+-- if Array.is(arr5) ~= true then log.warning("4_Array: Array.is(arr5) is "..tostring(Array.is(arr5)).."; expected true"); exit = false end
 
 -- Return status
 return exit

@@ -6,11 +6,6 @@ gmf = require("ReturnOfModding-GLOBAL/gmf")
 
 PATH = _ENV["!plugins_mod_folder_path"].."/"
 
--- Create oConsole
-if gm.instance_number(gm.constants.oConsole) == 0 then
-	gm.instance_create_depth(0, 0, -100000001, gm.constants.oConsole)
-end
-
 
 local testing_status = {}
 
