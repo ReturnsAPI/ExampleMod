@@ -28,12 +28,35 @@ Callback.add(Callback.ON_HIT_PROC, function(actor, victim, hit_info)
     local stack = actor:item_count(item)
     if stack <= 0 then return end
 
+    -- 25% chance on hit to create lightning
     if Util.chance(0.25) then
         local obj = Object.find("chainLightning")
         local lightning = obj:create(victim.x, victim.y)
         lightning.damage = hit_info.damage * (stack * 0.2)
         lightning.bounce = 3
         lightning.range = 80
+    end
+end)
+
+Callback.add(Callback.ON_STEP, function()
+    local actors = item:get_holding_actors()
+    
+    -- Create lightning on self every 1 second
+    for _, actor in ipairs(actors) do
+        local actor_data = Instance.get_data(actor, "blueCircle")
+        actor_data.timer = actor_data.timer or 0
+
+        if actor_data.timer > 0 then
+            actor_data.timer = actor_data.timer - 1
+        else
+            actor_data.timer = 60
+
+            local obj = Object.find("chainLightning")
+            local lightning = obj:create(actor.x, actor.y)
+            lightning.damage = actor.damage * (actor:item_count(item) * 0.2)
+            lightning.bounce = 3
+            lightning.range = 80
+        end
     end
 end)
 
