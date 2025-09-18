@@ -53,7 +53,7 @@ Callback.add(Callback.ON_STEP, function()
 
             local obj = Object.find("chainLightning")
             local lightning = obj:create(actor.x, actor.y)
-            lightning.damage = actor.damage * (actor:item_count(item) * 0.2)
+            lightning.damage = actor.damage * (actor:item_count(item) * 0.3)
             lightning.bounce = 3
             lightning.range = 120
         end
