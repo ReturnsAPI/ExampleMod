@@ -55,7 +55,7 @@ Callback.add(Callback.ON_STEP, function()
             local lightning = obj:create(actor.x, actor.y)
             lightning.damage = actor.damage * (actor:item_count(item) * 0.2)
             lightning.bounce = 3
-            lightning.range = 80
+            lightning.range = 120
         end
     end
 end)
